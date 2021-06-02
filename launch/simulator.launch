@@ -1,0 +1,21 @@
+<launch>
+
+  <!-- camera driver -->
+  <node name="evnet_gen" pkg="event_simulator" type="event_generator.py" />
+
+  <!-- visualization -->
+  <node name="dvs_noise_renderer" pkg="dvs_renderer" type="dvs_renderer">
+    <param name="display_method" value="red-blue"/>
+    <remap from="events" to="/sim/events" />
+    <remap from="image" to="/dvs/image_raw" />
+    <remap from="camera_info" to="/dvs/camera_info" />
+    <remap from="dvs_rendering" to="sim_rendering" />
+  </node>
+
+
+  <!-- display -->
+  <node name="rqt_image_view" pkg="rqt_image_view" type="rqt_image_view">
+  	<remap from="image" to="dvs_rendering"/>
+  </node>
+
+</launch>
