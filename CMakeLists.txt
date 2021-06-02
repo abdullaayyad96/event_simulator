@@ -28,3 +28,8 @@ catkin_package(
 #  CATKIN_DEPENDS geometry_msgs rospy
 #  DEPENDS python-numpy python-sys pythin-urx python-math
 )
+
+
+# Install the nodelet library
+cs_install()
+

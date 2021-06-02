@@ -9,6 +9,8 @@ import cv2
 from cv_bridge import CvBridge
 from sensor_msgs.msg import Image
 from dvs_msgs.msg import Event, EventArray
+from dynamic_reconfigure.server import Server
+from event_simulator.cfg import EventSimCfgConfig
 import copy
                                  
 
@@ -17,11 +19,12 @@ class event_simulator:
         self.ros_node = rospy.init_node('event_simulator', anonymous=True)
         self.event_pubs = rospy.Publisher('/sim/events', EventArray, queue_size=1)
         self.image_subs = rospy.Subscriber("/dvs/image_raw", Image, self.image_cb)
+        self.param_serv = srv = Server(EventSimCfgConfig, self.param_callback)
 
         self.cv_bridge = CvBridge()
 
-        self.canny_low_thresh = 50
-        self.canny_high_thresh = 100
+        self.canny_low_thresh = 100
+        self.canny_high_thresh = 150
         self.canny_kernel_size = 3
 
         rospy.spin()
@@ -66,7 +69,14 @@ class event_simulator:
             event_array.events.append(event)
 
         return event_array
-        
+
+    def param_callback(self, config, level):
+        self.canny_low_thresh = config.canny_low_thresh
+        self.canny_high_thresh = config.canny_high_thresh
+        self.canny_kernel_size = config.canny_kernel_size
+
+        return config
+
 if __name__ == '__main__':
     sim = event_simulator()
     exit()
